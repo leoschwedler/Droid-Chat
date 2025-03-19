@@ -23,9 +23,10 @@ import com.example.droidchat.R
 import com.example.droidchat.commom.theme.DroidChatTheme
 
 @Composable
-fun CustomButton(
+fun PrimaryButton(
     title: String,
     icon: Int,
+    iconPassword: Int? = null,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -38,7 +39,7 @@ fun CustomButton(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .height(50.dp)
-                .padding(start = 24.dp)
+                .padding(start = 24.dp, end = 24.dp)
         ) {
             Image(painter = painterResource(icon), contentDescription = null)
             Spacer(modifier = Modifier.width(10.dp))
@@ -46,20 +47,26 @@ fun CustomButton(
                 text = title,
                 fontSize = 16.sp,
                 color = Color(0xFF434343),
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .weight(1f),
                 fontWeight = FontWeight.Bold
             )
+            iconPassword?.let {
+                Image(painter = painterResource(iconPassword), contentDescription = null)
+            }
         }
     }
 }
 
 @Preview
 @Composable
-private fun CustomButtonPreview() {
+private fun PrimaryButtonPreview() {
     DroidChatTheme {
-        CustomButton(
+        PrimaryButton(
             title = "Entrar",
             icon = R.drawable.ic_safety
         )
+
     }
 }

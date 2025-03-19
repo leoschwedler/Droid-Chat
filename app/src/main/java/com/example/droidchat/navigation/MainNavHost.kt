@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.droidchat.navigation.MainRoutes.*
+import com.example.droidchat.ui.features.SignInGoogleAndFacebookScreen
 import com.example.droidchat.ui.features.SignInScreen
 import com.example.droidchat.ui.features.SplashScreen
 
@@ -16,7 +17,9 @@ fun MainNavHost() {
         composable<SplashRoute> {
             SplashScreen(
                 navigateToSign = {
-                    navController.navigate(route = SignInRoute, popUpto(SplashRoute))
+                    navController.navigate(route = SignInGoogleAndFacebookRoute){
+                        popUpTo(SplashRoute) { inclusive = true }
+                    }
                 }
             )
         }
@@ -25,6 +28,13 @@ fun MainNavHost() {
         }
         composable<SignInRoute> {
             SignInScreen()
+        }
+        composable<SignInGoogleAndFacebookRoute>{
+            SignInGoogleAndFacebookScreen(
+                naviteToSignUpScreen = {
+                    navController.navigate(route = SignInRoute)
+                }
+            )
         }
     }
 }
