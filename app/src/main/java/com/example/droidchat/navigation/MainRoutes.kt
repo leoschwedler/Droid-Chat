@@ -12,4 +12,6 @@ sealed class MainRoutes {
     data object SignInRoute : MainRoutes()
     @Serializable
     data object SignInGoogleAndFacebookRoute: MainRoutes()
+    @Serializable
+    data object SignUpRoute : MainRoutes()
 }

@@ -13,6 +13,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,8 +33,6 @@ import com.example.droidchat.commom.theme.Turquoise80
 @Composable
 fun PrimaryTextFieldCustom(
     leadingIcon: Int,
-    visibilityPassword: Boolean? = null,
-    onVisibilityPassword: () -> Unit = {},
     keyboardType: KeyboardType,
     value: String,
     onValueChange: (String) -> Unit,
@@ -39,6 +41,8 @@ fun PrimaryTextFieldCustom(
     imeAction: ImeAction,
     modifier: Modifier = Modifier
 ) {
+
+    var visibilityPassword by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
@@ -49,7 +53,7 @@ fun PrimaryTextFieldCustom(
                 modifier = Modifier.padding(start = 16.dp),
                 painter = painterResource(leadingIcon),
                 contentDescription = null,
-                tint = Turquoise80
+                tint = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
             )
         },
         keyboardOptions = KeyboardOptions(
@@ -63,18 +67,20 @@ fun PrimaryTextFieldCustom(
         },
         trailingIcon = {
             if (keyboardType == KeyboardType.Password && value.isNotBlank()) {
-                val visibility = if (visibilityPassword == true){
-                   R.drawable.ic_visibility
-                }else{
+                val visibility = if (visibilityPassword == true) {
+                    R.drawable.ic_visibility
+                } else {
                     R.drawable.ic_visibility_off
                 }
                 Icon(
-                    modifier = Modifier.padding(end = 16.dp).clickable {
-                        onVisibilityPassword()
-                    },
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clickable {
+                            visibilityPassword = !visibilityPassword
+                        },
                     painter = painterResource(visibility),
                     contentDescription = null,
-                    tint = Turquoise80
+                    tint = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
                 )
             }
         },
@@ -83,7 +89,7 @@ fun PrimaryTextFieldCustom(
         },
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedContainerColor =  MaterialTheme.colorScheme.surface,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
@@ -109,10 +115,8 @@ private fun PrimaryTextField() {
                 placeholder = "Email",
                 keyboardType = KeyboardType.Password,
                 onValueChange = {},
-                isError = false,
+                isError = true,
                 imeAction = ImeAction.Done,
-                visibilityPassword = false,
-                onVisibilityPassword = {}
             )
         }
     }

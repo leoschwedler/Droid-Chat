@@ -1,4 +1,4 @@
-package com.example.droidchat.ui.features
+package com.example.droidchat.features
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

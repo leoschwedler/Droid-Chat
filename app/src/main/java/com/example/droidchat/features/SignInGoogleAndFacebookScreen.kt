@@ -1,4 +1,4 @@
-package com.example.droidchat.ui.features
+package com.example.droidchat.features
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,19 +27,22 @@ import com.example.droidchat.R
 import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.PrimaryButton
 import com.example.droidchat.commom.theme.BackgroundGradient
-import com.example.droidchat.commom.theme.DroidChatTheme
 
 @Composable
 fun SignInGoogleAndFacebookScreen(
     naviteToSignUpScreen: () -> Unit,
 ) {
+    var isLoading by remember { mutableStateOf(false) }
+
     SignInGoogleAndFacebookContent(
-        naviteToSignUpScreen = naviteToSignUpScreen
+        isLoading = isLoading,
+        naviteToSignUpScreen = naviteToSignUpScreen,
     )
 }
 
 @Composable
 private fun SignInGoogleAndFacebookContent(
+    isLoading: Boolean,
     naviteToSignUpScreen: () -> Unit,
 ) {
     Column(
@@ -46,7 +53,7 @@ private fun SignInGoogleAndFacebookContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(145.dp))
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = "Logo",
@@ -72,14 +79,19 @@ private fun SignInGoogleAndFacebookContent(
             title = "Entrar com facebook",
             icon = R.drawable.ic_safety,
         )
-        CommomButton(title = "Começar", modifier = Modifier.padding(top = 50.dp) , onClick = naviteToSignUpScreen)
+        CommomButton(
+            title = "Começar",
+            modifier = Modifier.padding(top = 50.dp),
+            onClick = naviteToSignUpScreen,
+            isLoading = isLoading
+        )
         Text(
             modifier = Modifier.padding(top = 50.dp),
             text = "Esqueci minha senha >>",
             color = Color.White,
             fontSize = 12.sp,
 
-        )
+            )
         Divider(modifier = Modifier.padding(horizontal = 105.dp))
         Text(
             text = "Primeiro acesso >>",
@@ -94,7 +106,5 @@ private fun SignInGoogleAndFacebookContent(
 @Preview(showBackground = true)
 @Composable
 private fun SignInGoogleAndFacebookPreview() {
-    DroidChatTheme {
-        SignInGoogleAndFacebookScreen({})
-    }
+
 }

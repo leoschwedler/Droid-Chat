@@ -1,4 +1,4 @@
-package com.example.droidchat.ui.features
+package com.example.droidchat.features
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,8 +40,6 @@ fun SplashScreen(
         delay(3000)
         navigateToSign()
     }
-
-
 }
 
 @Composable
