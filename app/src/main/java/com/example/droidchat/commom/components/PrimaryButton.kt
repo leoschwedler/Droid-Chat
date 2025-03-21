@@ -1,12 +1,10 @@
 package com.example.droidchat.commom.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,32 +31,40 @@ fun PrimaryButton(
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
         color = Color.White,
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier
                 .height(50.dp)
-                .padding(start = 24.dp, end = 24.dp)
+                .fillMaxWidth().padding(horizontal = 26.dp)
         ) {
-            Image(painter = painterResource(icon), contentDescription = null)
-            Spacer(modifier = Modifier.width(10.dp))
+
             Text(
                 text = title,
                 fontSize = 16.sp,
                 color = Color(0xFF434343),
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .weight(1f),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+            Image(
+                painter = painterResource(icon),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.CenterStart)
+
             )
             iconPassword?.let {
-                Image(painter = painterResource(iconPassword), contentDescription = null)
+                Image(
+                    painter = painterResource(it),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                )
             }
         }
     }
 }
+
 
 @Preview
 @Composable

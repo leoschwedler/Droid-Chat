@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +28,7 @@ import com.example.droidchat.R
 import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.PrimaryButton
 import com.example.droidchat.commom.theme.BackgroundGradient
+import com.example.droidchat.navigation.extension.bottomBorder
 
 @Composable
 fun SignInGoogleAndFacebookScreen(
@@ -66,6 +68,7 @@ private fun SignInGoogleAndFacebookContent(
             text = "Esteja Sempre Conectado!",
             fontSize = 35.sp,
             color = Color.White,
+            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             lineHeight = 40.sp
         )
@@ -86,25 +89,25 @@ private fun SignInGoogleAndFacebookContent(
             isLoading = isLoading
         )
         Text(
-            modifier = Modifier.padding(top = 50.dp),
+            modifier = Modifier.padding(top = 50.dp).bottomBorder(color =  Color.White, strokeWidth =  2.dp),
             text = "Esqueci minha senha >>",
             color = Color.White,
-            fontSize = 12.sp,
+            fontSize = 12.sp,)
 
-            )
-        Divider(modifier = Modifier.padding(horizontal = 105.dp))
         Text(
             text = "Primeiro acesso >>",
             color = Color.White,
             fontSize = 12.sp,
-
+            modifier = Modifier.bottomBorder(color =  Color.White, strokeWidth =  2.dp)
             )
-        Divider(modifier = Modifier.padding(horizontal = 125.dp))
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignInGoogleAndFacebookPreview() {
-
+    SignInGoogleAndFacebookContent(
+        isLoading = false, naviteToSignUpScreen = {}
+    )
 }
