@@ -75,7 +75,7 @@ fun BasicTextFieldCustom(
         Surface(color = MaterialTheme.colorScheme.surface) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().bottomBorder(color = Color.Black, strokeWidth = 2.dp)
+                modifier = Modifier.fillMaxWidth().bottomBorder(color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 1.dp)
             ) {
                 Column (Modifier.fillMaxWidth().weight(1f)){
                     Text(

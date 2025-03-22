@@ -2,6 +2,7 @@ package com.example.droidchat.features
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,12 +34,14 @@ import com.example.droidchat.navigation.extension.bottomBorder
 @Composable
 fun SignInGoogleAndFacebookScreen(
     naviteToSignUpScreen: () -> Unit,
+    naviteToSignInScreen: () -> Unit,
 ) {
     var isLoading by remember { mutableStateOf(false) }
 
     SignInGoogleAndFacebookContent(
         isLoading = isLoading,
         naviteToSignUpScreen = naviteToSignUpScreen,
+        naviteToSignInScreen = naviteToSignInScreen
     )
 }
 
@@ -46,6 +49,7 @@ fun SignInGoogleAndFacebookScreen(
 private fun SignInGoogleAndFacebookContent(
     isLoading: Boolean,
     naviteToSignUpScreen: () -> Unit,
+    naviteToSignInScreen: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -85,7 +89,7 @@ private fun SignInGoogleAndFacebookContent(
         CommomButton(
             title = "Começar",
             modifier = Modifier.padding(top = 50.dp),
-            onClick = naviteToSignUpScreen,
+            onClick = naviteToSignInScreen,
             isLoading = isLoading
         )
         Text(
@@ -93,12 +97,13 @@ private fun SignInGoogleAndFacebookContent(
             text = "Esqueci minha senha >>",
             color = Color.White,
             fontSize = 12.sp,)
+        Spacer(modifier = Modifier.height(5.dp))
 
         Text(
             text = "Primeiro acesso >>",
             color = Color.White,
             fontSize = 12.sp,
-            modifier = Modifier.bottomBorder(color =  Color.White, strokeWidth =  2.dp)
+            modifier = Modifier.bottomBorder(color =  Color.White, strokeWidth =  2.dp).clickable { naviteToSignUpScreen() }
             )
 
     }
@@ -108,6 +113,6 @@ private fun SignInGoogleAndFacebookContent(
 @Composable
 private fun SignInGoogleAndFacebookPreview() {
     SignInGoogleAndFacebookContent(
-        isLoading = false, naviteToSignUpScreen = {}
+        isLoading = false, naviteToSignUpScreen = {}, naviteToSignInScreen = {}
     )
 }
