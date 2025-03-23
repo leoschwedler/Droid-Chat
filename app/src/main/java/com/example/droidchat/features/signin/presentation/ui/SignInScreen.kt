@@ -1,4 +1,4 @@
-package com.example.droidchat.features.SignInScreen.presentation.ui
+package com.example.droidchat.features.signin.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,9 +28,9 @@ import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.PrimaryTextFieldCustom
 import com.example.droidchat.commom.theme.BackgroundGradient
 import com.example.droidchat.commom.theme.Turquoise80
-import com.example.droidchat.features.SignInScreen.presentation.action.SignInAction
-import com.example.droidchat.features.SignInScreen.presentation.state.SignInUiState
-import com.example.droidchat.features.SignInScreen.presentation.viewmodel.SignInViewModel
+import com.example.droidchat.features.signin.presentation.action.SignInAction
+import com.example.droidchat.features.signin.presentation.state.SignInUiState
+import com.example.droidchat.features.signin.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun SignInScreen(

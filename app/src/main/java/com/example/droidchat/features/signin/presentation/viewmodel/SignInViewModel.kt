@@ -1,8 +1,8 @@
-package com.example.droidchat.features.SignInScreen.presentation.viewmodel
+package com.example.droidchat.features.signin.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.droidchat.features.SignInScreen.presentation.action.SignInAction
-import com.example.droidchat.features.SignInScreen.presentation.state.SignInUiState
+import com.example.droidchat.features.signin.presentation.action.SignInAction
+import com.example.droidchat.features.signin.presentation.state.SignInUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

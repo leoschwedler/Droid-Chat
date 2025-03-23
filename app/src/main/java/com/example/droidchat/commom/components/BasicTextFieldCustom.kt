@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.droidchat.R
 import com.example.droidchat.commom.theme.ColorSuccess
 import com.example.droidchat.commom.theme.DroidChatTheme
-import com.example.droidchat.navigation.extension.bottomBorder
+import com.example.droidchat.commom.extension.bottomBorder
 
 @Composable
 fun BasicTextFieldCustom(

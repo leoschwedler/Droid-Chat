@@ -1,4 +1,4 @@
-package com.example.droidchat.features.SignInScreen.presentation.action
+package com.example.droidchat.features.signin.presentation.action
 
 sealed class SignInAction {
 

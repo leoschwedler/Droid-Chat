@@ -1,4 +1,4 @@
-package com.example.droidchat.navigation.extension
+package com.example.droidchat.commom.extension
 
 
 import androidx.compose.ui.Modifier

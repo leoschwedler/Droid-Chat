@@ -29,7 +29,7 @@ import com.example.droidchat.R
 import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.PrimaryButton
 import com.example.droidchat.commom.theme.BackgroundGradient
-import com.example.droidchat.navigation.extension.bottomBorder
+import com.example.droidchat.commom.extension.bottomBorder
 
 @Composable
 fun SignInGoogleAndFacebookScreen(

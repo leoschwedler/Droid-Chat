@@ -1,4 +1,4 @@
-package com.example.droidchat.features.SignInScreen.presentation.state
+package com.example.droidchat.features.signin.presentation.state
 
 data class SignInUiState(
     var email: String = "",
