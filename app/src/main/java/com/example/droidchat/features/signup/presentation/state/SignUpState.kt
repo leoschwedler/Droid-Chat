@@ -2,11 +2,11 @@ package com.example.droidchat.features.signup.presentation.state
 
 import android.net.Uri
 
-data class SignUpUiState(
+data class SignUpState(
     val bottomSheet: Boolean = false,
     val profilePictureUri: Uri? = null,
-    val name: String = "",
-    val nameError: String? = null,
+    val firstName: String = "",
+    val firstNameError: String? = null,
     val lastName: String = "",
     val lastNameError: String? = null,
     val email: String = "",
@@ -15,5 +15,7 @@ data class SignUpUiState(
     val passwordError: String? = null,
     val confirmPassword: String = "",
     val confirmPasswordError: String? = null,
-    val loading: Boolean = false
+    val isLoading: Boolean = false,
+    val extraText: String? = null,
+    val hasError : Boolean = false
 )

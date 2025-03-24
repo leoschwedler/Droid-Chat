@@ -47,7 +47,6 @@ fun PrimaryTextFieldCustom(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
-
         leadingIcon = {
             Icon(
                 modifier = Modifier.padding(start = 16.dp),

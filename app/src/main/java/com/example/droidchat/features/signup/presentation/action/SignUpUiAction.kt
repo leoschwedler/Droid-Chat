@@ -10,5 +10,6 @@ sealed class SignUpUiAction {
     data class onConfirmPasswordChange(val confirmPassword: String) : SignUpUiAction()
     data class onBottomSheetChange(val bottomSheet: Boolean) : SignUpUiAction()
     data class onProfilePictureSelected(val uri: Uri) : SignUpUiAction()
+    object onExtraTextChange : SignUpUiAction()
     object onSubmit : SignUpUiAction()
 }

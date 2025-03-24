@@ -1,6 +1,5 @@
 package com.example.droidchat.commom.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,8 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -34,9 +31,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.droidchat.R
+import com.example.droidchat.commom.extension.bottomBorder
 import com.example.droidchat.commom.theme.ColorSuccess
 import com.example.droidchat.commom.theme.DroidChatTheme
-import com.example.droidchat.commom.extension.bottomBorder
 
 @Composable
 fun BasicTextFieldCustom(
@@ -46,6 +43,7 @@ fun BasicTextFieldCustom(
     extraText: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction,
+    isError: String? = null,
     modifier: Modifier = Modifier
 ) {
 
@@ -54,6 +52,7 @@ fun BasicTextFieldCustom(
 
     BasicTextField(
         value = value,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(MaterialTheme.colorScheme.onSurface),
         onValueChange = onValueChange,
         minLines = 1,
         singleLine = true,
@@ -73,42 +72,63 @@ fun BasicTextFieldCustom(
         }
     ) { innerTextField ->
         Surface(color = MaterialTheme.colorScheme.surface) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().bottomBorder(color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 1.dp)
-            ) {
-                Column (Modifier.fillMaxWidth().weight(1f)){
-                    Text(
-                        label,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Row (verticalAlignment = Alignment.CenterVertically,){
-                        Box(modifier = Modifier.weight(1f)) {
-                            innerTextField()
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bottomBorder(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            strokeWidth = 1.dp
+                        )
+                ) {
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                innerTextField()
+                            }
+                            extraText?.let {
+                                Text(
+                                    it,
+                                    modifier = Modifier.padding(4.dp),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ColorSuccess
+                                )
+                            }
                         }
-                        extraText?.let {
-                            Text(
-                                it,
-                                modifier = Modifier.padding(4.dp),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = ColorSuccess
+                    }
+                    if (keyboardType == KeyboardType.Password && value.isNotBlank()) {
+                        val visibilityIcon = if (passwordVisibility) {
+                            R.drawable.ic_visibility
+
+                        } else {
+                            R.drawable.ic_visibility_off
+                        }
+                        IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                            Icon(
+                                painter = painterResource(visibilityIcon),
+                                contentDescription = null
                             )
                         }
                     }
                 }
-                if (keyboardType == KeyboardType.Password && value.isNotBlank()){
-                    val visibilityIcon = if (passwordVisibility){
-                        R.drawable.ic_visibility
-
-                    } else {
-                        R.drawable.ic_visibility_off
-                    }
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility}) {
-                        Icon(painter = painterResource(visibilityIcon), contentDescription = null)
-                    }
+                isError?.let {
+                    Text(
+                        text = isError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }
@@ -126,6 +146,7 @@ private fun BasicTextFieldCustomPreview() {
                 value = "",
                 onValueChange = {},
                 label = "Password",
+                isError = "Password matches",
                 extraText = "Password matches",
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next

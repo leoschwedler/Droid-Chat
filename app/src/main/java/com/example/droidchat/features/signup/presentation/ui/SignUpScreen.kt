@@ -48,8 +48,8 @@ import com.example.droidchat.commom.extension.bottomBorder
 import com.example.droidchat.commom.theme.BackgroundGradient
 import com.example.droidchat.commom.theme.Turquoise80
 import com.example.droidchat.features.signup.presentation.action.SignUpUiAction
-import com.example.droidchat.features.signup.presentation.event.SignUpUiEvent
-import com.example.droidchat.features.signup.presentation.state.SignUpUiState
+import com.example.droidchat.features.signup.presentation.event.SignUpEvent
+import com.example.droidchat.features.signup.presentation.state.SignUpState
 import com.example.droidchat.features.signup.presentation.viewmodel.SignUpViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,10 +62,10 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                SignUpUiEvent.navigate -> {
+                SignUpEvent.navigate -> {
 
                 }
-                is SignUpUiEvent.showSnackBar -> {
+                is SignUpEvent.showSnackBar -> {
                     snackBarHostState.showSnackbar(message = event.message)
                 }
             }
@@ -88,7 +88,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpContent(
-    uiState: SignUpUiState,
+    uiState: SignUpState,
     onAction: (SignUpUiAction) -> Unit,
 ) {
 
@@ -123,6 +123,7 @@ fun SignUpContent(
                     model = uiState.profilePictureUri ?: R.drawable.ic_upload_photo,
                     contentDescription = null,
                     placeholder = painterResource(R.drawable.ic_upload_photo),
+
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(80.dp)
@@ -130,12 +131,12 @@ fun SignUpContent(
                         .clickable {
                             onAction(SignUpUiAction.onBottomSheetChange(true))
                         }
-
                 )
                 Text("Adicionar foto")
                 Spacer(Modifier.height(29.dp))
                 BasicTextFieldCustom(
-                    value = uiState.name,
+                    value = uiState.firstName,
+                    isError = uiState.firstNameError,
                     onValueChange = {
                         onAction(SignUpUiAction.onNameChange(it))
                     },
@@ -146,6 +147,7 @@ fun SignUpContent(
                 Spacer(Modifier.height(22.dp))
                 BasicTextFieldCustom(
                     value = uiState.lastName,
+                    isError = uiState.lastNameError,
                     onValueChange = {
                         onAction(SignUpUiAction.onLastNameChange(it))
                     },
@@ -156,6 +158,7 @@ fun SignUpContent(
                 Spacer(Modifier.height(22.dp))
                 BasicTextFieldCustom(
                     value = uiState.email,
+                    isError = uiState.emailError,
                     onValueChange = {
                         onAction(SignUpUiAction.onEmailChange(it))
                     },
@@ -164,29 +167,37 @@ fun SignUpContent(
                 )
 
                 Spacer(Modifier.height(22.dp))
+
+
                 BasicTextFieldCustom(
                     value = uiState.password,
+                    isError = uiState.passwordError,
                     onValueChange = {
                         onAction(SignUpUiAction.onPasswordChange(it))
+                        onAction(SignUpUiAction.onExtraTextChange)
                     },
                     keyboardType = KeyboardType.Password,
                     label = "Senha",
-                    extraText = "as senhas sao iguais",
+                    extraText = uiState.extraText,
                     imeAction = ImeAction.Next
                 )
                 Spacer(Modifier.height(22.dp))
                 BasicTextFieldCustom(
                     value = uiState.confirmPassword,
+                    isError = uiState.confirmPasswordError,
                     onValueChange = {
                         onAction(SignUpUiAction.onConfirmPasswordChange(it))
+                        onAction(SignUpUiAction.onExtraTextChange)
                     },
-                    extraText = "as senhas sao iguais",
+                    extraText = uiState.extraText,
                     keyboardType = KeyboardType.Password,
                     label = "Confirmação de senha",
                     imeAction = ImeAction.Done
                 )
                 Spacer(Modifier.height(36.dp))
-                CommomButton(title = "Cadastrar", onClick = {}, modifier = Modifier.height(64.dp))
+                CommomButton(title = "Cadastrar", onClick = {
+                    onAction(SignUpUiAction.onSubmit)
+                }, modifier = Modifier.height(64.dp))
                 Spacer(Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -228,7 +239,7 @@ fun SignUpContent(
 @Composable
 private fun SignUpPreview() {
     SignUpContent(
-        uiState = SignUpUiState(),
+        uiState = SignUpState(),
         onAction = {}
 
     )
