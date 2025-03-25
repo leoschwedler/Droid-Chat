@@ -1,5 +1,8 @@
 package com.example.droidchat.features.signup.presentation.validator
 
+import com.example.droidchat.commom.validator.EmailValidator
+import com.example.droidchat.commom.validator.FormValidator
+import com.example.droidchat.commom.validator.PasswordValidator
 import com.example.droidchat.features.signup.presentation.state.SignUpState
 import javax.inject.Inject
 

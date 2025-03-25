@@ -1,8 +1,9 @@
 package com.example.droidchat.features.signin.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.droidchat.commom.validator.FormValidator
 import com.example.droidchat.features.signin.presentation.action.SignInAction
-import com.example.droidchat.features.signin.presentation.state.SignInUiState
+import com.example.droidchat.features.signin.presentation.state.SignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,9 +11,10 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor() : ViewModel() {
+class SignInViewModel @Inject constructor(private val formValidator: FormValidator<SignInState>) :
+    ViewModel() {
 
-    private val _uiState = MutableStateFlow(SignInUiState())
+    private val _uiState = MutableStateFlow(SignInState())
     val uiState = _uiState.asStateFlow()
 
     fun onActions(action: SignInAction) {
@@ -25,26 +27,23 @@ class SignInViewModel @Inject constructor() : ViewModel() {
             is SignInAction.onPasswordChange -> {
                 _uiState.update { it.copy(password = action.password) }
             }
+
             SignInAction.onSubmit -> {
-               doSubmit()
+                onSubmit()
             }
         }
     }
-    fun doSubmit(){
-        var isFormValid = true
-        val email = _uiState.value.email
-        val password = _uiState.value.password
-        if (email.isBlank()){
-            isFormValid = false
-            _uiState.update { it.copy(isEmailError = true) }
-        }
-        if (password.isBlank()){
-            isFormValid = false
-            _uiState.update { it.copy(isPasswordError = true) }
-        }
-        if (isFormValid){
+
+    fun onSubmit() {
+        if (isValidForm()) {
             _uiState.update { it.copy(isLoading = true) }
-            _uiState.update { it.copy(email = "", isEmailError = false, password = "" , isPasswordError = false) }
         }
     }
+
+    fun isValidForm(): Boolean {
+        val validateState = formValidator.validate(_uiState.value)
+        _uiState.update { validateState }
+        return !validateState.hasError
+    }
+
 }

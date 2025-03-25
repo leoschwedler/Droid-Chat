@@ -81,11 +81,19 @@ dependencies {
 
     implementation(libs.accompanist.permissions)
 
-    // RETROFIT AND OKHTTP3
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // Módulo central do Ktor
+    implementation("io.ktor:ktor-client-core:3.1.0")
+    // Engine para Android
+    implementation("io.ktor:ktor-client-android:3.1.0")
+    // Engine CIO
+    implementation("io.ktor:ktor-client-cio:3.1.0")
+    // Serializatoion
+    implementation("io.ktor:ktor-client-serialization:3.1.0")
+    // Logging
+    implementation("io.ktor:ktor-client-logging:3.1.0")
+    // Ktor Content Negotiation
+    implementation("io.ktor:ktor-client-content-negotiation:3.1.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

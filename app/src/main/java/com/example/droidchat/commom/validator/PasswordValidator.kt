@@ -1,4 +1,4 @@
-package com.example.droidchat.features.signup.presentation.validator
+package com.example.droidchat.commom.validator
 
 object PasswordValidator {
 

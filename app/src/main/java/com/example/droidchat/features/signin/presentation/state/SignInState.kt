@@ -1,9 +1,10 @@
 package com.example.droidchat.features.signin.presentation.state
 
-data class SignInUiState(
+data class SignInState(
     var email: String = "",
-    val isEmailError: Boolean = false,
+    val emailErrorMessage: String? = null,
     var password: String = "",
-    val isPasswordError: Boolean = false,
+    val passwordErrorMessage: String? = null,
     var isLoading: Boolean = false,
+    var hasError: Boolean = false
 )

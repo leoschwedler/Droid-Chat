@@ -37,7 +37,7 @@ fun PrimaryTextFieldCustom(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    isError: Boolean? = null,
+    isError: String? = null,
     imeAction: ImeAction,
     modifier: Modifier = Modifier
 ) {
@@ -52,7 +52,7 @@ fun PrimaryTextFieldCustom(
                 modifier = Modifier.padding(start = 16.dp),
                 painter = painterResource(leadingIcon),
                 contentDescription = null,
-                tint = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
+                tint =  Turquoise80
             )
         },
         keyboardOptions = KeyboardOptions(
@@ -79,7 +79,7 @@ fun PrimaryTextFieldCustom(
                         },
                     painter = painterResource(visibility),
                     contentDescription = null,
-                    tint = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
+                    tint =  Turquoise80
                 )
             }
         },
@@ -91,7 +91,7 @@ fun PrimaryTextFieldCustom(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = if (isError == true) MaterialTheme.colorScheme.error else Turquoise80
+            unfocusedBorderColor =  Turquoise80
         ),
         value = value,
         onValueChange = onValueChange,
@@ -114,7 +114,7 @@ private fun PrimaryTextField() {
                 placeholder = "Email",
                 keyboardType = KeyboardType.Password,
                 onValueChange = {},
-                isError = true,
+                modifier = Modifier.padding(horizontal = 16.dp),
                 imeAction = ImeAction.Done,
             )
         }

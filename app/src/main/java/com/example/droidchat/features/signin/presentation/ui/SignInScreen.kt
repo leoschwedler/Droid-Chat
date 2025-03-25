@@ -29,7 +29,7 @@ import com.example.droidchat.commom.components.PrimaryTextFieldCustom
 import com.example.droidchat.commom.theme.BackgroundGradient
 import com.example.droidchat.commom.theme.Turquoise80
 import com.example.droidchat.features.signin.presentation.action.SignInAction
-import com.example.droidchat.features.signin.presentation.state.SignInUiState
+import com.example.droidchat.features.signin.presentation.state.SignInState
 import com.example.droidchat.features.signin.presentation.viewmodel.SignInViewModel
 
 @Composable
@@ -52,7 +52,7 @@ fun SignInScreen(
 
 @Composable
 fun SignInContent(
-    uiState: SignInUiState,
+    uiState: SignInState,
     onActions: (SignInAction) -> Unit,
     navigateToSignUp: () -> Unit
 ) {
@@ -77,7 +77,7 @@ fun SignInContent(
             keyboardType = KeyboardType.Email,
             value = uiState.email,
             placeholder = "Developer@gmail.com",
-            isError = uiState.isEmailError,
+            isError = uiState.emailErrorMessage,
             onValueChange = {
                 onActions(SignInAction.onEmailChange(it))
             },
@@ -89,7 +89,7 @@ fun SignInContent(
             keyboardType = KeyboardType.Password,
             value = uiState.password,
             placeholder = "*********",
-            isError = uiState.isPasswordError,
+            isError = uiState.passwordErrorMessage,
             onValueChange = {
                 onActions(SignInAction.onPasswordChange(it))
             },

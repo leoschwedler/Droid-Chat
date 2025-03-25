@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.droidchat.features.signup.presentation.action.SignUpUiAction
 import com.example.droidchat.features.signup.presentation.event.SignUpEvent
 import com.example.droidchat.features.signup.presentation.state.SignUpState
-import com.example.droidchat.features.signup.presentation.validator.FormValidator
+import com.example.droidchat.commom.validator.FormValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
