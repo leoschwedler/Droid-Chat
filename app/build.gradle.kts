@@ -81,18 +81,16 @@ dependencies {
 
     implementation(libs.accompanist.permissions)
 
-    // Módulo central do Ktor
-    implementation("io.ktor:ktor-client-core:3.1.0")
-    // Engine para Android
-    implementation("io.ktor:ktor-client-android:3.1.0")
-    // Engine CIO
-    implementation("io.ktor:ktor-client-cio:3.1.0")
-    // Serializatoion
-    implementation("io.ktor:ktor-client-serialization:3.1.0")
-    // Logging
-    implementation("io.ktor:ktor-client-logging:3.1.0")
-    // Ktor Content Negotiation
-    implementation("io.ktor:ktor-client-content-negotiation:3.1.0")
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.websockets)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.resources)
+    implementation(libs.ktor.client.auth)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
 
 
     testImplementation(libs.junit)

@@ -14,6 +14,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
@@ -31,11 +32,14 @@ object NetworkModule {
                 level = LogLevel.ALL
             }
             install(ContentNegotiation){
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                }
+              json(
+                  Json{
+                      prettyPrint = true
+                      isLenient = true
+                      ignoreUnknownKeys = true
+                  }
+              )
+
             }
             defaultRequest {
                 url("https://chat-api.androidmoderno.com.br/")
