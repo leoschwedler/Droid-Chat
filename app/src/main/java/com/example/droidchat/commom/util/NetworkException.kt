@@ -1,4 +1,4 @@
-package com.example.droidchat.commom.domain.model
+package com.example.droidchat.commom.util
 
 sealed class NetworkException(message: String, cause: Throwable? = null) :
     Exception(message, cause) {

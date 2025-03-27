@@ -16,12 +16,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +58,7 @@ import com.example.droidchat.features.signup.presentation.viewmodel.SignUpViewMo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
@@ -62,9 +66,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                SignUpEvent.navigate -> {
-
-                }
+                SignUpEvent.navigate -> {}
                 is SignUpEvent.showSnackBar -> {
                     snackBarHostState.showSnackbar(message = event.message)
                 }
@@ -72,17 +74,33 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         }
     }
 
+    if (uiState.apiErrorMessageResId != null) AlertDialog(
+        onDismissRequest = viewModel::onDismissDialog,
+        confirmButton = {
+            TextButton(onClick = viewModel::onDismissDialog) {
+                Text(text = "OK")
+            }
+        },
+        title = {
+            Text(text = stringResource(R.string.common_generic_error_title))
+        },
+        text = {
+            Text(text = uiState.apiErrorMessageResId!!)
+        }
+    )
 
-   Box (Modifier.fillMaxSize()){
-       SignUpContent(
-           uiState = uiState,
-           onAction = viewModel::onActions
-       )
-       SnackbarHost(
-           hostState = snackBarHostState,
-           modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp)
-       )
-   }
+    Box(Modifier.fillMaxSize()) {
+        SignUpContent(
+            uiState = uiState,
+            onAction = viewModel::onActions
+        )
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp)
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,21 +137,35 @@ fun SignUpContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                AsyncImage(
-                    model = uiState.profilePictureUri ?: R.drawable.ic_upload_photo,
-                    contentDescription = null,
-                    placeholder = painterResource(R.drawable.ic_upload_photo),
+                Box(contentAlignment = Alignment.Center) {
+                    AsyncImage(
+                        model = uiState.profilePictureUri ?: R.drawable.ic_upload_photo,
+                        contentDescription = null,
+                        placeholder = painterResource(R.drawable.ic_upload_photo),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                onAction(SignUpUiAction.onBottomSheetChange(true))
+                            }
+                    )
+                    if (uiState.isCompressingImage) {
+                        CircularProgressIndicator()
+                    }
 
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            onAction(SignUpUiAction.onBottomSheetChange(true))
-                        }
+                }
+                Spacer(Modifier.height(4.dp))
+                val text = if (uiState.isCompressingImage) {
+                    "Otimizando"
+                } else {
+                    "Adicionar foto de perfil"
+                }
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge
                 )
-                Text("Adicionar foto")
-                Spacer(Modifier.height(29.dp))
+                Spacer(Modifier.height(8.dp))
                 BasicTextFieldCustom(
                     value = uiState.firstName,
                     isError = uiState.firstNameError,

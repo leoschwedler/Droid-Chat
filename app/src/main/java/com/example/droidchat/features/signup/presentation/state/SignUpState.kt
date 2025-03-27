@@ -17,5 +17,9 @@ data class SignUpState(
     val confirmPasswordError: String? = null,
     val isLoading: Boolean = false,
     val extraText: String? = null,
-    val hasError : Boolean = false
+    val hasError : Boolean = false,
+    val isSigneUp : Boolean = false,
+    val apiErrorMessageResId: String? = null,
+    val isCompressingImage: Boolean = false
+    
 )

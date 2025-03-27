@@ -1,17 +1,21 @@
 package com.example.droidchat.commom.data.di
 
+import com.example.droidchat.commom.util.NetworkException
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -27,23 +31,37 @@ object NetworkModule {
     fun provideHttpClient(): HttpClient {
         return HttpClient(CIO) {
             expectSuccess = true
-            install(Logging){
+            install(Logging) {
                 logger = Logger.SIMPLE
                 level = LogLevel.ALL
             }
-            install(ContentNegotiation){
-              json(
-                  Json{
-                      prettyPrint = true
-                      isLenient = true
-                      ignoreUnknownKeys = true
-                  }
-              )
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    }
+                )
 
             }
             defaultRequest {
                 url("https://chat-api.androidmoderno.com.br/")
                 contentType(ContentType.Application.Json)
+            }
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest { cause, request ->
+                    throw when (cause) {
+                        is ClientRequestException -> {
+                            val errorMessage = cause.response.bodyAsText()
+                            NetworkException.ApiException(errorMessage, cause.response.status.value)
+                        }
+
+                        else -> {
+                            NetworkException.UnknownNetworkException(cause)
+                        }
+                    }
+                }
             }
         }
     }

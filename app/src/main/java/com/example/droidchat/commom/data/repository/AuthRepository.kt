@@ -5,7 +5,7 @@ import com.example.droidchat.commom.domain.model.LoginAccount
 
 interface AuthRepository {
 
-    suspend fun signUp(createAccount: CreateAccount)
+    suspend fun signUp(createAccount: CreateAccount): Result<Unit>
 
     suspend fun signIn(loginAccount: LoginAccount)
 

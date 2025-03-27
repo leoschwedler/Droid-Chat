@@ -1,15 +1,21 @@
 package com.example.droidchat.features.signup.presentation.viewmodel
 
+import android.content.Context
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.droidchat.commom.data.repository.AuthRepository
 import com.example.droidchat.commom.domain.model.CreateAccount
-import com.example.droidchat.commom.domain.model.NetworkException
+import com.example.droidchat.commom.util.NetworkException
+import com.example.droidchat.commom.util.image.ImageCompressor
 import com.example.droidchat.commom.validator.FormValidator
 import com.example.droidchat.features.signup.presentation.action.SignUpUiAction
 import com.example.droidchat.features.signup.presentation.event.SignUpEvent
 import com.example.droidchat.features.signup.presentation.state.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val formValidator: FormValidator<SignUpState>,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpState())
@@ -58,6 +65,7 @@ class SignUpViewModel @Inject constructor(
 
             is SignUpUiAction.onProfilePictureSelected -> {
                 _uiState.update { it.copy(profilePictureUri = action.uri) }
+                action.uri?.let { compressImageAndUpdateState(it) }
             }
 
             SignUpUiAction.onSubmit -> {
@@ -81,25 +89,30 @@ class SignUpViewModel @Inject constructor(
     fun onSubmit() {
         if (isValidForm()) {
             _uiState.update { it.copy(isLoading = true) }
-            viewModelScope.launch {
-                try {
-                    val request = CreateAccount(
-                        firstName = _uiState.value.firstName,
-                        lastName = _uiState.value.lastName,
-                        password = _uiState.value.password,
-                        profilePictureId = null,
-                        username = _uiState.value.email
-                    )
-                    authRepository.signUp(request)
-                    _uiEvent.send(SignUpEvent.showSnackBar("$request"))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    if (e is NetworkException.ApiException) {
-
-                    } else {
-
+            viewModelScope.launch(Dispatchers.IO) {
+                val request = CreateAccount(
+                    firstName = _uiState.value.firstName,
+                    lastName = _uiState.value.lastName,
+                    password = _uiState.value.password,
+                    profilePictureId = null,
+                    username = _uiState.value.email
+                )
+                authRepository.signUp(request).fold(
+                    onSuccess = {
+                        _uiState.update { it.copy(isLoading = false) }
+                        _uiState.update { it.copy(isSigneUp = true) }
+                    },
+                    onFailure = {
+                        _uiState.update { it.copy(isLoading = false) }
+                        if (it is NetworkException.ApiException) {
+                            when (it.statusCode) {
+                                409 -> { _uiState.update { it.copy(apiErrorMessageResId = "Erro de validação de formulário, confira os dados e tente novamente") } }
+                                400 -> { _uiState.update { it.copy(apiErrorMessageResId = "Usuário com o e-mail fornecido já existe no sistema") } }
+                                else -> { _uiState.update { it.copy(apiErrorMessageResId = "Alguma coisa deu errado") } }
+                            }
+                        }
                     }
-                }
+                )
             }
         }
     }
@@ -108,5 +121,23 @@ class SignUpViewModel @Inject constructor(
         val validateState = formValidator.validate(_uiState.value)
         _uiState.update { validateState }
         return !validateState.hasError
+    }
+
+    fun onDismissDialog() {
+        _uiState.update { it.copy(apiErrorMessageResId = null) }
+    }
+
+    private fun compressImageAndUpdateState(uri: Uri){
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isCompressingImage = true) }
+                val compressedImage = ImageCompressor.compressAndResizeImage(context, uri)
+                _uiState.update { it.copy(profilePictureUri = compressedImage.toUri()) }
+            }catch (e: Exception){
+
+            }finally {
+                _uiState.update { it.copy(isCompressingImage = false) }
+            }
+        }
     }
 }
