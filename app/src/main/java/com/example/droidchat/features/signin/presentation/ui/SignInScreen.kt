@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +24,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.droidchat.R
+import com.example.droidchat.commom.components.AlertDialogCustom
 import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.PrimaryTextFieldCustom
 import com.example.droidchat.commom.theme.BackgroundGradient
@@ -35,15 +38,30 @@ import com.example.droidchat.features.signin.presentation.viewmodel.SignInViewMo
 @Composable
 fun SignInScreen(
     navigateToSignUp: () -> Unit,
-    hiltViewModel: SignInViewModel = hiltViewModel()
+    navigateToHome: () -> Unit,
+    viewmodel: SignInViewModel = hiltViewModel()
 ) {
-    val uiState by hiltViewModel.uiState.collectAsState()
+    val uiState by viewmodel.uiState.collectAsState()
 
+    if (uiState.isSignedIn){
+        AlertDialogCustom(
+            onDismissRequest = navigateToHome,
+            onConfirmButton = navigateToHome,
+            text = "Logado com sucesso",
+        )
+    }
 
+    uiState.apiErrorMessageResId?.let {
+        AlertDialogCustom(
+            onDismissRequest = viewmodel::onDismissDialog,
+            onConfirmButton = viewmodel::onDismissDialog,
+            text = it,
+        )
+    }
 
     SignInContent(
         uiState = uiState,
-        onActions = hiltViewModel::onActions,
+        onActions = viewmodel::onActions,
         navigateToSignUp = navigateToSignUp
     )
 
@@ -118,5 +136,8 @@ fun SignInContent(
 @Preview
 @Composable
 private fun SignInScreenPreview() {
-    SignInScreen({})
+    SignInScreen(
+        navigateToSignUp = {},
+        navigateToHome = {}
+    )
 }

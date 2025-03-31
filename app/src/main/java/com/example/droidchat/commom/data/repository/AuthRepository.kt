@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun signUp(createAccount: CreateAccount): Result<Unit>
 
-    suspend fun signIn(loginAccount: LoginAccount)
+    suspend fun signIn(loginAccount: LoginAccount): Result<Unit>
 
     suspend fun profilePicture(filePath: String): Result<ImageDomain>
 
