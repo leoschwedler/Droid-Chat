@@ -159,7 +159,6 @@ class SignUpViewModel @Inject constructor(
                 val compressedImage = imageCompressor.compressAndResizeImage(uri)
                 _uiState.update { it.copy(profilePictureUri = compressedImage.toUri()) }
             } catch (e: Exception) {
-
             } finally {
                 _uiState.update { it.copy(isCompressingImage = false) }
             }

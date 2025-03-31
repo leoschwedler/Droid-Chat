@@ -27,9 +27,13 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signIn(loginAccount: LoginAccount) {
-        val response = loginAccount.toSignInRequest()
-        networkDataSource.signIn(response)
+    override suspend fun signIn(loginAccount: LoginAccount): Result<Unit> {
+        return withContext(ioDispacher) {
+            runCatching {
+                val response = loginAccount.toSignInRequest()
+                networkDataSource.signIn(response)
+            }.map { Unit }
+        }
     }
 
     override suspend fun profilePicture(filePath: String): Result<ImageDomain> {
