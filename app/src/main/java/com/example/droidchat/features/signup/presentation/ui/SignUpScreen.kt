@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.droidchat.R
+import com.example.droidchat.commom.components.AlertDialogCustom
 import com.example.droidchat.commom.components.BasicTextFieldCustom
 import com.example.droidchat.commom.components.CommomButton
 import com.example.droidchat.commom.components.ProfilePictureOptionsModalBottomSheet
@@ -60,7 +61,10 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
+fun SignUpScreen(
+    viewModel: SignUpViewModel = hiltViewModel(),
+    onSignUpSuccess: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
@@ -73,21 +77,24 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             }
         }
     }
+    if (uiState.isSigneUp){
+        AlertDialogCustom(
+            onDismissRequest = onSignUpSuccess,
+            onConfirmButton = onSignUpSuccess,
+            title = "Usuário criado com sucesso",
+            text = "Seja bem vindo ao DroidChat",
+        )
+    }
 
-    if (uiState.apiErrorMessageResId != null) AlertDialog(
-        onDismissRequest = viewModel::onDismissDialog,
-        confirmButton = {
-            TextButton(onClick = viewModel::onDismissDialog) {
-                Text(text = "OK")
-            }
-        },
-        title = {
-            Text(text = stringResource(R.string.common_generic_error_title))
-        },
-        text = {
-            Text(text = uiState.apiErrorMessageResId!!)
-        }
-    )
+    uiState.apiErrorMessageResId?.let { errorMessage ->
+        AlertDialogCustom(
+            onDismissRequest = viewModel::onDismissDialog,
+            onConfirmButton = viewModel::onDismissDialog,
+            title = "Alguma coisa deu errado",
+            text = errorMessage,
+        )
+    }
+
 
     Box(Modifier.fillMaxSize()) {
         SignUpContent(

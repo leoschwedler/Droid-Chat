@@ -5,13 +5,17 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.droidchat.commom.extension.slideInTo
+import com.example.droidchat.commom.extension.slideOutTo
 import com.example.droidchat.features.SignInGoogleAndFacebookScreen
 import com.example.droidchat.features.signin.presentation.ui.SignInScreen
 import com.example.droidchat.features.signup.presentation.ui.SignUpScreen
 import com.example.droidchat.features.splash.presentation.ui.SplashScreen
-import com.example.droidchat.navigation.MainRoutes.*
-import com.example.droidchat.commom.extension.slideInTo
-import com.example.droidchat.commom.extension.slideOutTo
+import com.example.droidchat.navigation.MainRoutes.LoginRoute
+import com.example.droidchat.navigation.MainRoutes.SignInGoogleAndFacebookRoute
+import com.example.droidchat.navigation.MainRoutes.SignInRoute
+import com.example.droidchat.navigation.MainRoutes.SignUpRoute
+import com.example.droidchat.navigation.MainRoutes.SplashRoute
 
 @Composable
 fun MainNavHost() {
@@ -57,7 +61,13 @@ fun MainNavHost() {
                 }
             )
         }
-        composable<SignUpRoute> { SignUpScreen() }
+        composable<SignUpRoute> {
+            SignUpScreen(
+                onSignUpSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
         composable<LoginRoute> {}
     }
 }

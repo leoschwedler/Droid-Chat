@@ -1,6 +1,5 @@
 package com.example.droidchat.features.signup.presentation.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -14,7 +13,6 @@ import com.example.droidchat.features.signup.presentation.action.SignUpUiAction
 import com.example.droidchat.features.signup.presentation.event.SignUpEvent
 import com.example.droidchat.features.signup.presentation.state.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +26,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val formValidator: FormValidator<SignUpState>,
     private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val imageCompressor: ImageCompressor,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpState())
@@ -90,11 +88,30 @@ class SignUpViewModel @Inject constructor(
         if (isValidForm()) {
             _uiState.update { it.copy(isLoading = true) }
             viewModelScope.launch(Dispatchers.IO) {
+                var profilePicutreId: Int? = null
+                var errorWhenUploadProfilePicture = false
+
+                _uiState.value.profilePictureUri?.path?.let { path ->
+                    authRepository.profilePicture(path).fold(
+                        onSuccess = {
+                            profilePicutreId = it.id
+                        },
+                        onFailure = {
+                            errorWhenUploadProfilePicture = true
+                            _uiState.update { it.copy(profilePictureUri = null) }
+                            _uiState.update { it.copy(apiErrorMessageResId = "Error ao fazer upload da imagem de perfil") }
+                        }
+                    )
+                }
+                if (errorWhenUploadProfilePicture) {
+                    return@launch
+                }
+
                 val request = CreateAccount(
                     firstName = _uiState.value.firstName,
                     lastName = _uiState.value.lastName,
                     password = _uiState.value.password,
-                    profilePictureId = null,
+                    profilePictureId = profilePicutreId,
                     username = _uiState.value.email
                 )
                 authRepository.signUp(request).fold(
@@ -106,9 +123,17 @@ class SignUpViewModel @Inject constructor(
                         _uiState.update { it.copy(isLoading = false) }
                         if (it is NetworkException.ApiException) {
                             when (it.statusCode) {
-                                409 -> { _uiState.update { it.copy(apiErrorMessageResId = "Erro de validação de formulário, confira os dados e tente novamente") } }
-                                400 -> { _uiState.update { it.copy(apiErrorMessageResId = "Usuário com o e-mail fornecido já existe no sistema") } }
-                                else -> { _uiState.update { it.copy(apiErrorMessageResId = "Alguma coisa deu errado") } }
+                                409 -> {
+                                    _uiState.update { it.copy(apiErrorMessageResId = "Erro de validação de formulário, confira os dados e tente novamente") }
+                                }
+
+                                400 -> {
+                                    _uiState.update { it.copy(apiErrorMessageResId = "Usuário com o e-mail fornecido já existe no sistema") }
+                                }
+
+                                else -> {
+                                    _uiState.update { it.copy(apiErrorMessageResId = "Alguma coisa deu errado") }
+                                }
                             }
                         }
                     }
@@ -127,15 +152,15 @@ class SignUpViewModel @Inject constructor(
         _uiState.update { it.copy(apiErrorMessageResId = null) }
     }
 
-    private fun compressImageAndUpdateState(uri: Uri){
+    private fun compressImageAndUpdateState(uri: Uri) {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isCompressingImage = true) }
-                val compressedImage = ImageCompressor.compressAndResizeImage(context, uri)
+                val compressedImage = imageCompressor.compressAndResizeImage(uri)
                 _uiState.update { it.copy(profilePictureUri = compressedImage.toUri()) }
-            }catch (e: Exception){
+            } catch (e: Exception) {
 
-            }finally {
+            } finally {
                 _uiState.update { it.copy(isCompressingImage = false) }
             }
         }
