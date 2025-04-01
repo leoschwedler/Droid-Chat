@@ -13,4 +13,10 @@ interface AuthRepository {
 
     suspend fun profilePicture(filePath: String): Result<ImageDomain>
 
+    suspend fun authenticate(token: String): Result<Unit>
+
+    suspend fun getAccessToken(): String?
+
+    suspend fun clearAccessToken()
+
 }

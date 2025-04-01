@@ -2,18 +2,21 @@ package com.example.droidchat.commom.data.repository
 
 import com.example.droidchat.commom.data.datasource.networkdatasouce.NetworkDataSource
 import com.example.droidchat.commom.data.di.IoDispatcher
+import com.example.droidchat.commom.data.network.model.SignInRequest
 import com.example.droidchat.commom.data.network.model.toImageDomain
 import com.example.droidchat.commom.domain.model.CreateAccount
 import com.example.droidchat.commom.domain.model.ImageDomain
 import com.example.droidchat.commom.domain.model.LoginAccount
-import com.example.droidchat.commom.domain.model.toSignInRequest
 import com.example.droidchat.commom.domain.model.toSignUpRequest
+import com.example.droidchat.commom.manager.TokenManager
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
+    private val tokenManager: TokenManager,
     @IoDispatcher private val ioDispacher: CoroutineDispatcher
 ) :
     AuthRepository {
@@ -21,7 +24,6 @@ class AuthRepositoryImpl @Inject constructor(
         return withContext(ioDispacher) {
             runCatching {
                 val response = createAccount.toSignUpRequest()
-                println("Signup Request: $response")
                 networkDataSource.signUp(response)
             }
         }
@@ -30,9 +32,14 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signIn(loginAccount: LoginAccount): Result<Unit> {
         return withContext(ioDispacher) {
             runCatching {
-                val response = loginAccount.toSignInRequest()
-                networkDataSource.signIn(response)
-            }.map { Unit }
+                val tokenResponse = networkDataSource.signIn(
+                    signInRequest = SignInRequest(
+                        username = loginAccount.username,
+                        password = loginAccount.password
+                    )
+                )
+                tokenManager.saveAccessToken(tokenResponse.token)
+            }
         }
     }
 
@@ -42,6 +49,26 @@ class AuthRepositoryImpl @Inject constructor(
                 val response = networkDataSource.profilePicture(filePath)
                 response.toImageDomain()
             }
+        }
+    }
+
+    override suspend fun authenticate(token: String): Result<Unit> {
+        return withContext(ioDispacher) {
+            runCatching {
+                val authenticateResponse = networkDataSource.authenticate(token)
+            }
+        }
+    }
+
+    override suspend fun getAccessToken(): String? {
+        return withContext(ioDispacher) {
+            tokenManager.accessToken.firstOrNull()
+        }
+    }
+
+    override suspend fun clearAccessToken() {
+        withContext(ioDispacher){
+            tokenManager.clearAccessToken()
         }
     }
 }

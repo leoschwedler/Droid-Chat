@@ -1,5 +1,7 @@
 package com.example.droidchat.features.signin.presentation.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,21 +12,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.droidchat.R
 import com.example.droidchat.commom.components.AlertDialogCustom
 import com.example.droidchat.commom.components.CommomButton
@@ -32,6 +38,7 @@ import com.example.droidchat.commom.components.PrimaryTextFieldCustom
 import com.example.droidchat.commom.theme.BackgroundGradient
 import com.example.droidchat.commom.theme.Turquoise80
 import com.example.droidchat.features.signin.presentation.action.SignInAction
+import com.example.droidchat.features.signin.presentation.event.SigninEvent
 import com.example.droidchat.features.signin.presentation.state.SignInState
 import com.example.droidchat.features.signin.presentation.viewmodel.SignInViewModel
 
@@ -39,23 +46,33 @@ import com.example.droidchat.features.signin.presentation.viewmodel.SignInViewMo
 fun SignInScreen(
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
+    context: Context = LocalContext.current,
     viewmodel: SignInViewModel = hiltViewModel()
 ) {
     val uiState by viewmodel.uiState.collectAsState()
+    val errorMessage = stringResource(R.string.common_generic_error_title)
 
-    if (uiState.isSignedIn){
-        AlertDialogCustom(
-            onDismissRequest = navigateToHome,
-            onConfirmButton = navigateToHome,
-            text = "Logado com sucesso",
-        )
+    LaunchedEffect(Unit) {
+        viewmodel.uiEvent.collect{ event ->
+            when(event){
+                SigninEvent.IsSucess -> {
+                    navigateToHome()
+                }
+                SigninEvent.Error.GenericError -> {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                SigninEvent.Error.UnauthorizedError -> {
+                    uiState.showDialog = true
+                }
+            }
+        }
     }
 
-    uiState.apiErrorMessageResId?.let {
+    if (uiState.showDialog){
         AlertDialogCustom(
-            onDismissRequest = viewmodel::onDismissDialog,
-            onConfirmButton = viewmodel::onDismissDialog,
-            text = it,
+            onDismissRequest = { uiState.showDialog = false },
+            onConfirmButton = { uiState.showDialog = false },
+            text = stringResource(R.string.error_message_invalid_username_or_password),
         )
     }
 
