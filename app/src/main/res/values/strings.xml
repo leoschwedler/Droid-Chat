@@ -38,5 +38,7 @@
     <string name="splash_safety_info">Mensagens seguras, criptografadas e privadas</string>
     <string name="ocorreu_um_erro_ao_autenticar_o_usuario">Ocorreu um erro ao autenticar o usuário</string>
     <string name="fechar_o_app">Fechar o App</string>
+    <string name="sess_o_expirada_fa_a_login_novamente">Sessão expirada, faça login novamente</string>
+    <string name="fechar_app">Fechar App</string>
 
 </resources>
