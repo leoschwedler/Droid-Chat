@@ -14,7 +14,6 @@ import com.example.droidchat.features.HomeScreen
 import com.example.droidchat.features.SignInGoogleAndFacebookScreen
 import com.example.droidchat.features.signin.presentation.ui.SignInScreen
 import com.example.droidchat.features.signup.presentation.ui.SignUpScreen
-import com.example.droidchat.features.splash.presentation.ui.SplashScreen
 import com.example.droidchat.navigation.MainRoutes.*
 
 @Composable
