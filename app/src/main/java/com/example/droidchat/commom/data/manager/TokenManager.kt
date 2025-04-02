@@ -1,4 +1,4 @@
-package com.example.droidchat.commom.manager
+package com.example.droidchat.commom.data.manager
 
 import kotlinx.coroutines.flow.Flow
 

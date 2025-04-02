@@ -2,13 +2,14 @@ package com.example.droidchat.commom.data.repository
 
 import com.example.droidchat.commom.data.datasource.networkdatasouce.NetworkDataSource
 import com.example.droidchat.commom.data.di.IoDispatcher
+import com.example.droidchat.commom.data.manager.SelfUserManager
+import com.example.droidchat.commom.data.manager.TokenManager
 import com.example.droidchat.commom.data.network.model.SignInRequest
 import com.example.droidchat.commom.data.network.model.toImageDomain
 import com.example.droidchat.commom.domain.model.CreateAccount
 import com.example.droidchat.commom.domain.model.ImageDomain
 import com.example.droidchat.commom.domain.model.LoginAccount
 import com.example.droidchat.commom.domain.model.toSignUpRequest
-import com.example.droidchat.commom.manager.TokenManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
     private val tokenManager: TokenManager,
+    private val selfUserManager: SelfUserManager,
     @IoDispatcher private val ioDispacher: CoroutineDispatcher
 ) :
     AuthRepository {
@@ -56,6 +58,12 @@ class AuthRepositoryImpl @Inject constructor(
         return withContext(ioDispacher) {
             runCatching {
                 val authenticateResponse = networkDataSource.authenticate(token)
+                selfUserManager.saveSelfUserData(
+                    firstName = authenticateResponse.firstName,
+                    lastName = authenticateResponse.lastName,
+                    username = authenticateResponse.username,
+                    profilePictureUrl = authenticateResponse.profilePictureUrl
+                )
             }
         }
     }
@@ -67,7 +75,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearAccessToken() {
-        withContext(ioDispacher){
+        withContext(ioDispacher) {
             tokenManager.clearAccessToken()
         }
     }

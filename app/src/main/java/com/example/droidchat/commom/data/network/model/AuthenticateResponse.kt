@@ -7,6 +7,6 @@ data class AuthenticateResponse(
     val firstName: String,
     val lastName: String,
     val id: Int,
-    val profilePictureUrl: String?,
+    val profilePictureUrl: String,
     val username: String
 )

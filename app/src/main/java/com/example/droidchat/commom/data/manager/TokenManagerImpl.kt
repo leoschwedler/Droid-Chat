@@ -1,10 +1,10 @@
-package com.example.droidchat.commom.manager
+package com.example.droidchat.commom.data.manager
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import com.example.droidchat.commom.data.di.IoDispatcher
-import com.example.droidchat.commom.datastore.TokenKeys
-import com.example.droidchat.commom.datastore.tokenDataStore
+import com.example.droidchat.commom.data.datastore.TokenKeys
+import com.example.droidchat.commom.data.datastore.tokenDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

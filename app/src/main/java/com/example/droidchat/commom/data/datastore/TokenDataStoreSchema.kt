@@ -1,4 +1,4 @@
-package com.example.droidchat.commom.datastore
+package com.example.droidchat.commom.data.datastore
 
 import android.content.Context
 import androidx.datastore.preferences.core.stringPreferencesKey
