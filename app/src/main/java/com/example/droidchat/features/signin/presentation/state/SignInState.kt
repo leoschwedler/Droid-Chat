@@ -6,7 +6,6 @@ data class SignInState(
     var password: String = "",
     val passwordErrorMessage: String? = null,
     var isLoading: Boolean = false,
+    var showDialog: Boolean = false,
     var hasError: Boolean = false,
-    var isSignedIn: Boolean = false,
-    val apiErrorMessageResId: String? = null,
 )

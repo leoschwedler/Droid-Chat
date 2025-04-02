@@ -1,5 +1,6 @@
 package com.example.droidchat.commom.data.datasource.networkdatasouce
 
+import com.example.droidchat.commom.data.network.model.AuthenticateResponse
 import com.example.droidchat.commom.data.network.model.ImageResponse
 import com.example.droidchat.commom.data.network.model.SignInRequest
 import com.example.droidchat.commom.data.network.model.SignUpRequest
@@ -8,6 +9,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
@@ -38,5 +41,11 @@ class NetworkDataSourceImpl @Inject constructor(private val httpClient: HttpClie
             })
         }
         ).body()
+    }
+
+    override suspend fun authenticate(token: String): AuthenticateResponse {
+        return httpClient.get("authenticate") {
+            header(HttpHeaders.Authorization, "Bearer $token")
+        }.body()
     }
 }
